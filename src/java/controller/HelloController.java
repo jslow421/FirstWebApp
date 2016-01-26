@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.HelloService;
 
 /**
  *
@@ -37,26 +38,31 @@ public class HelloController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8"); // M.I.M.E type 
         try (PrintWriter out = response.getWriter()) {
             String name = request.getParameter("username");
-            // ^^ this line is very important - give me value that goes with parameter "username"
-            // every parameter comes back as a string - ONLY a string
-            String responseMsg = "Hello " + name + ", isn't Java great!";
+            
+            HelloService helloSrv = new HelloService();
+            String responseMsg = helloSrv.sayHello(name);
+            
+           
             request.setAttribute("myMsg", responseMsg);
             // setAttribute(Key, Value)
             // Attribute is datatype Object
             // stored as an attribute of the request object ("key", value)
+            
+            RequestDispatcher view = request.getRequestDispatcher("/helloResponse.jsp");
+            view.forward(request, response);
 
         } catch (Exception e) {
             request.setAttribute("errorMsg", e.getMessage());
         }
 
-        RequestDispatcher view = request.getRequestDispatcher("/helloResponse.jsp");
+     //   RequestDispatcher view = request.getRequestDispatcher("/helloResponse.jsp");
         // hello response is the view in the MVC
         // use request dispatcher to send information to another page 
         // request dispatcher is a special object
         // this code can be used for ANY instance of needing to send a message
         // have to forward to jsp page, because html can't run java
         // use html when there's no java, jsp when there is java
-        view.forward(request, response);
+      //  view.forward(request, response);
         // send both request and response to the page
         // you forward the request as well because you are using it to hold data (response)
         // request is made to server, server creates an object that data is put into as attributes
